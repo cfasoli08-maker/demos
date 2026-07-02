@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#2E5A4C" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="Ramsey" />
+<title>Ramsey</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body, #root { margin: 0; padding: 0; min-height: 100%; background: #EDE4D6; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  button { cursor: pointer; font-family: inherit; }
+</style>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+
+const P = {
+  home: ['m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z','M9 22V12h6v10'],
+  pie: ['M21.21 15.89A10 10 0 1 1 8 2.83','M22 12A10 10 0 0 0 12 2v10z'],
+  trend: ['M22 7 13.5 15.5 8.5 10.5 2 17','M16 7h6v6'],
+  piggy: ['M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-3V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z','M16 10h.01'],
+  plus: ['M5 12h14','M12 5v14'],
+  minus: ['M5 12h14'],
+  alert: ['m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z','M12 9v4','M12 17h.01'],
+  check: ['M20 6 9 17l-5-5'],
+  upright: ['M7 7h10v10','M7 17 17 7'],
+  downright: ['m7 7 10 10','M17 7v10H7'],
+  lock: ['M7 11V7a5 5 0 0 1 10 0v4'],
+};
+function Ico({ name, size = 20, color = '#000' }) {
+  const d = P[name] || [];
+  const extra = name === 'lock'
+    ? <rect x="3" y="11" width="18" height="11" rx="2" ry="2" fill="none" stroke={color} strokeWidth="2" />
+    : null;
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      {extra}
+      {d.map((p, i) => <path key={i} d={p} />)}
+    </svg>
+  );
+}
+const Home = (p) => <Ico name="home" {...p} />;
+const PieChart = (p) => <Ico name="pie" {...p} />;
+const TrendingUp = (p) => <Ico name="trend" {...p} />;
+const PiggyBank = (p) => <Ico name="piggy" {...p} />;
+const Plus = (p) => <Ico name="plus" {...p} />;
+const Minus = (p) => <Ico name="minus" {...p} />;
+const AlertTriangle = (p) => <Ico name="alert" {...p} />;
+const Check = (p) => <Ico name="check" {...p} />;
+const ArrowUpRight = (p) => <Ico name="upright" {...p} />;
+const ArrowDownRight = (p) => <Ico name="downright" {...p} />;
+const Lock = (p) => <Ico name="lock" {...p} />;
+
+const cream = '#F5EFE6', card = '#FBF6EC', cardAlt = '#FFFDF9', green = '#2E5A4C',
+  greenLt = '#3B7A5E', gold = '#B98A34', red = '#B24A38', ink = '#2A2A28',
+  muted = '#8F897E', line = '#E7DECF';
+const serif = "Georgia, 'Iowan Old Style', Palatino, 'Times New Roman', serif";
+const sans = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+const fmt = (n) => Math.round(n).toLocaleString('en-US');
+
+function RamseyBudget() {
+  const [tab, setTab] = useState('overview');
+  const income = 6845, planned = 7000;
+  const initial = [
+    { name: 'Housing', amt: 1650 }, { name: 'Groceries', amt: 725 },
+    { name: 'Utilities', amt: 330 }, { name: 'Fuel', amt: 255 },
+    { name: 'Dining & Pub', amt: 220 }, { name: 'Insurance', amt: 190 },
+    { name: 'Phone & Subs', amt: 150 }, { name: 'Kids', amt: 300 },
+    { name: 'Debt Snowball', amt: 850 }, { name: 'Emergency Fund', amt: 900 },
+    { name: 'Truck Fund', amt: 350 }, { name: 'Vacation Fund', amt: 450 },
+    { name: 'Giving', amt: 300 },
+  ];
+  const [alloc, setAlloc] = useState(initial);
+  const allocated = alloc.reduce((s, c) => s + c.amt, 0);
+  const left = income - allocated;
+  const bump = (i, d) => setAlloc((a) => a.map((c, idx) => idx === i ? { ...c, amt: Math.max(0, c.amt + d) } : c));
+  const sweep = () => setAlloc((a) => a.map((c) => c.name === 'Emergency Fund' ? { ...c, amt: c.amt + left } : c));
+
+  const weeks = [
+    { label: 'Week 1', inc: 1850, out: 1620 }, { label: 'Week 2', inc: 2400, out: 1980 },
+    { label: 'Week 3', inc: 600, out: 1940 }, { label: 'Week 4', inc: 1995, out: 1420 },
+  ];
+  let run = 180;
+  const flow = weeks.map((w) => { run = run + w.inc - w.out; return { ...w, bal: run }; });
+  const goals = [
+    { name: 'Emergency Fund', have: 2400, goal: 6000, add: 900 },
+    { name: 'Truck Fund', have: 850, goal: 2000, add: 350 },
+    { name: 'Vacation Fund', have: 1300, goal: 3500, add: 450 },
+  ];
+
+  const shell = { fontFamily: sans, background: cream, color: ink, maxWidth: 440, margin: '0 auto', minHeight: 780, position: 'relative', boxShadow: '0 30px 80px rgba(45,40,30,0.18)', overflow: 'hidden' };
+  const soft = { boxShadow: '0 6px 18px rgba(70,55,35,0.08)', border: `1px solid ${line}` };
+  const pad = { padding: '0 18px' };
+
+  const Bar = ({ pct, color }) => (
+    <div style={{ height: 8, background: '#EAE1D0', borderRadius: 20, overflow: 'hidden' }}>
+      <div style={{ width: `${Math.min(100, pct)}%`, height: '100%', background: color, borderRadius: 20, transition: 'width .3s' }} />
+    </div>
+  );
+
+  return (
+    <div style={{ background: '#EDE4D6', padding: '18px 0', minHeight: '100vh', fontFamily: sans }}>
+      <div style={shell}>
+        <div style={{ position: 'sticky', top: 0, zIndex: 5, background: green, color: '#F7F1E6', padding: '20px 18px 16px', borderBottomLeftRadius: 22, borderBottomRightRadius: 22 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <div style={{ fontFamily: serif, fontSize: 26, fontWeight: 700, letterSpacing: 0.3 }}>Ramsey</div>
+              <div style={{ fontSize: 12, color: '#C6D8CE', marginTop: 1 }}>Every dollar a home</div>
+            </div>
+            <div style={{ width: 40, height: 40, borderRadius: 12, background: greenLt, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: serif, fontWeight: 700 }}>R</div>
+          </div>
+          <div style={{ marginTop: 14, fontSize: 13, color: '#CBDBD1' }}>Good morning</div>
+          <div style={{ fontFamily: serif, fontSize: 17 }}>Here’s where March stands</div>
+        </div>
+
+        <div style={{ paddingBottom: 92 }}>
+          {tab === 'overview' && (
+            <div style={{ ...pad, paddingTop: 16 }}>
+              <div style={{ ...soft, background: cardAlt, borderRadius: 18, padding: 18, marginBottom: 14 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                  <span style={{ fontSize: 13, color: muted }}>Income received</span>
+                  <span style={{ fontSize: 12, color: red, fontWeight: 600 }}>$155 under plan</span>
+                </div>
+                <div style={{ fontFamily: serif, fontSize: 34, fontWeight: 700, margin: '4px 0 10px' }}>${fmt(income)}</div>
+                <Bar pct={(income / planned) * 100} color={gold} />
+                <div style={{ fontSize: 12, color: muted, marginTop: 6 }}>of ${fmt(planned)} planned · paid across 4 draws</div>
+              </div>
+              <div style={{ ...soft, background: left === 0 ? '#EAF2ED' : '#FBF2E0', borderRadius: 18, padding: 16, marginBottom: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontSize: 13, color: muted }}>Left to give a home</div>
+                  <div style={{ fontFamily: serif, fontSize: 26, fontWeight: 700, color: left === 0 ? greenLt : gold }}>${fmt(left)}</div>
+                </div>
+                <button onClick={() => setTab('allocate')} style={{ background: green, color: '#F7F1E6', border: 'none', borderRadius: 12, padding: '10px 16px', fontSize: 13, fontWeight: 600 }}>Allocate →</button>
+              </div>
+              <div style={{ ...soft, background: cardAlt, borderRadius: 18, padding: 16, marginBottom: 14 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <span style={{ fontSize: 14, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}><Lock size={14} color={green} /> Dining & Pub — spendable</span>
+                  <span style={{ fontSize: 13, color: greenLt, fontWeight: 700 }}>$47 left</span>
+                </div>
+                <Bar pct={(173 / 220) * 100} color={red} />
+                <div style={{ fontSize: 12, color: muted, marginTop: 8 }}>$173 of $220 spent · Fri pub night ran $50 vs the $30 you planned</div>
+              </div>
+              <div onClick={() => setTab('cashflow')} style={{ ...soft, background: '#F6E4DF', border: `1px solid ${red}`, borderRadius: 18, padding: 16, display: 'flex', gap: 12, alignItems: 'center', cursor: 'pointer' }}>
+                <AlertTriangle size={22} color={red} />
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: red }}>Week 3 runs short by $510</div>
+                  <div style={{ fontSize: 12, color: '#8a5a50' }}>Low draw week, expenses due. Tap to fix the flow →</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {tab === 'allocate' && (
+            <div style={{ ...pad, paddingTop: 16 }}>
+              <div style={{ ...soft, borderRadius: 18, padding: 20, marginBottom: 16, textAlign: 'center', background: left === 0 ? green : (left < 0 ? '#F6E4DF' : cardAlt), color: left === 0 ? '#F7F1E6' : ink, border: left === 0 ? 'none' : soft.border }}>
+                {left === 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                    <Check size={30} color="#F7F1E6" />
+                    <div style={{ fontFamily: serif, fontSize: 22, fontWeight: 700 }}>Every dollar has a job</div>
+                    <div style={{ fontSize: 12, color: '#C6D8CE' }}>Zero-based and balanced</div>
+                  </div>
+                ) : (
+                  <React.Fragment>
+                    <div style={{ fontSize: 13, color: left < 0 ? red : muted }}>{left < 0 ? 'Over-allocated' : 'Left to give a home'}</div>
+                    <div style={{ fontFamily: serif, fontSize: 40, fontWeight: 700, color: left < 0 ? red : gold }}>${fmt(Math.abs(left))}</div>
+                    {left > 0 && (
+                      <button onClick={sweep} style={{ marginTop: 8, background: green, color: '#F7F1E6', border: 'none', borderRadius: 12, padding: '9px 16px', fontSize: 13, fontWeight: 600 }}>Send remaining to Emergency Fund</button>
+                    )}
+                  </React.Fragment>
+                )}
+              </div>
+              {alloc.map((c, i) => (
+                <div key={c.name} style={{ ...soft, background: cardAlt, borderRadius: 14, padding: '12px 14px', marginBottom: 9, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 600 }}>{c.name}</div>
+                    <div style={{ fontSize: 13, color: green, fontFamily: serif, fontWeight: 700 }}>${fmt(c.amt)}</div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={() => bump(i, -25)} style={{ width: 34, height: 34, borderRadius: 10, border: `1px solid ${line}`, background: cream, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Minus size={15} color={ink} /></button>
+                    <button onClick={() => bump(i, 25)} style={{ width: 34, height: 34, borderRadius: 10, border: 'none', background: green, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Plus size={15} color="#F7F1E6" /></button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {tab === 'cashflow' && (
+            <div style={{ ...pad, paddingTop: 16 }}>
+              <div style={{ ...soft, background: '#F6E4DF', border: `1px solid ${red}`, borderRadius: 16, padding: 14, marginBottom: 14, display: 'flex', gap: 10 }}>
+                <AlertTriangle size={20} color={red} />
+                <div style={{ fontSize: 13, color: '#7d4a41' }}>Week 3 dips to <b style={{ color: red }}>-$510</b>. Move $510 from Week 2’s surplus or pause the Truck Fund to stay above zero.</div>
+              </div>
+              {flow.map((w) => {
+                const short = w.bal < 0;
+                return (
+                  <div key={w.label} style={{ ...soft, background: short ? '#FBEDE9' : cardAlt, border: short ? `1px solid ${red}` : soft.border, borderRadius: 16, padding: 15, marginBottom: 11 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                      <span style={{ fontFamily: serif, fontSize: 16, fontWeight: 700 }}>{w.label}</span>
+                      <span style={{ fontSize: 13, color: short ? red : greenLt, fontWeight: 700 }}>{short ? '−' : ''}${fmt(Math.abs(w.bal))} {short ? 'short' : 'in hand'}</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: 10 }}>
+                      <div style={{ flex: 1, background: '#EAF2ED', borderRadius: 10, padding: '8px 10px' }}>
+                        <div style={{ fontSize: 11, color: muted, display: 'flex', alignItems: 'center', gap: 4 }}><ArrowUpRight size={12} color={greenLt} /> in</div>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: greenLt }}>${fmt(w.inc)}</div>
+                      </div>
+                      <div style={{ flex: 1, background: '#F3E7E3', borderRadius: 10, padding: '8px 10px' }}>
+                        <div style={{ fontSize: 11, color: muted, display: 'flex', alignItems: 'center', gap: 4 }}><ArrowDownRight size={12} color={red} /> out</div>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: red }}>${fmt(w.out)}</div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {tab === 'save' && (
+            <div style={{ ...pad, paddingTop: 16 }}>
+              <div style={{ ...soft, background: green, color: '#F7F1E6', borderRadius: 18, padding: 18, marginBottom: 16 }}>
+                <div style={{ fontSize: 13, color: '#C6D8CE' }}>Anything not spent sweeps here</div>
+                <div style={{ fontFamily: serif, fontSize: 30, fontWeight: 700 }}>$4,550 saved</div>
+                <div style={{ fontSize: 12, color: '#C6D8CE', marginTop: 2 }}>+$1,700 added this month</div>
+              </div>
+              {goals.map((g) => (
+                <div key={g.name} style={{ ...soft, background: cardAlt, borderRadius: 16, padding: 16, marginBottom: 12 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                    <span style={{ fontSize: 15, fontWeight: 600 }}>{g.name}</span>
+                    <span style={{ fontSize: 12, color: greenLt, fontWeight: 700 }}>+${fmt(g.add)}</span>
+                  </div>
+                  <Bar pct={(g.have / g.goal) * 100} color={green} />
+                  <div style={{ fontSize: 12, color: muted, marginTop: 7 }}>${fmt(g.have)} of ${fmt(g.goal)}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div style={{ position: 'sticky', bottom: 0, background: cardAlt, borderTop: `1px solid ${line}`, display: 'flex', justifyContent: 'space-around', padding: '10px 8px 14px', boxShadow: '0 -6px 20px rgba(70,55,35,0.06)' }}>
+          {[
+            { k: 'overview', label: 'Home', Icon: Home },
+            { k: 'allocate', label: 'Allocate', Icon: PieChart },
+            { k: 'cashflow', label: 'Flow', Icon: TrendingUp },
+            { k: 'save', label: 'Save', Icon: PiggyBank },
+          ].map(({ k, label, Icon }) => {
+            const on = tab === k;
+            return (
+              <button key={k} onClick={() => setTab(k)} style={{ background: 'none', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '4px 10px', borderRadius: 12, color: on ? green : muted }}>
+                <div style={{ background: on ? '#E3EDE7' : 'transparent', borderRadius: 10, padding: 6 }}>
+                  <Icon size={20} color={on ? green : muted} />
+                </div>
+                <span style={{ fontSize: 11, fontWeight: on ? 700 : 500 }}>{label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<RamseyBudget />);
+</script>
+</body>
+</html>
