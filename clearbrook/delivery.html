@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Clearbrook Water Co. demo: Delivery day</title>
+<style>
+/* Clearbrook Water Co. demo. Demo data only. Light theme only. */
+:root {
+  --paper: #FBF8F1;
+  --card: #FFFFFF;
+  --line: #E6E0D4;
+  --ink: #1C1E1A;
+  --muted: #6B675E;
+  --faint: #A39E93;
+  --blue: #1E4E6E;
+  --blue-soft: #E7EFF4;
+  --orange: #D9722F;
+  --orange-soft: #FBEEE3;
+  --red: #B9362B;
+  --gold: #C4922B;
+  --strip: #F7F6F2;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); }
+body { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.4; -webkit-font-smoothing: antialiased; }
+button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; padding: 0; }
+button:disabled { cursor: default; }
+input { font: inherit; }
+b, strong { font-weight: 700; }
+
+/* Pragma Build strip */
+.pb-strip { height: 38px; background: var(--strip); border-bottom: 1px solid #E8E5DD; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; position: sticky; top: 0; z-index: 40; }
+.pb-brand { display: flex; align-items: center; gap: 8px; }
+.pb-mark { width: 20px; height: 20px; border-radius: 6px; background: var(--gold); display: inline-flex; align-items: center; justify-content: center; }
+.pb-mark svg { width: 13px; height: 13px; display: block; }
+.pb-name { font-weight: 800; color: #1C1E1A; letter-spacing: -0.03em; font-size: 15px; }
+.pb-tag { font-size: 12px; color: #8A867C; }
+
+/* Site nav */
+.nav { background: var(--card); border-bottom: 1px solid var(--line); position: sticky; top: 38px; z-index: 30; }
+.nav-in { max-width: 640px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; height: 48px; gap: 8px; }
+.nav-co { display: flex; align-items: center; gap: 6px; font-weight: 700; color: var(--blue); font-size: 14px; white-space: nowrap; }
+.nav-tabs { display: flex; gap: 2px; }
+.nav-tab { padding: 6px 10px; border-radius: 8px; font-size: 14px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.nav-tab[aria-current="page"] { background: var(--blue-soft); color: var(--blue); }
+@media (max-width: 420px) { .nav-co span { display: none; } .nav-tab { padding: 6px 8px; font-size: 13px; } }
+
+/* Screens */
+.screen { display: none; }
+.screen.on { display: block; }
+.frame { max-width: 420px; margin: 0 auto; min-height: calc(100vh - 86px); display: flex; flex-direction: column; }
+.pad { padding: 20px 20px 24px; }
+h1 { font-size: 28px; line-height: 1.15; margin: 0 0 12px; color: var(--blue); font-weight: 800; }
+h2 { font-size: 22px; line-height: 1.2; margin: 0 0 6px; color: var(--blue); font-weight: 800; }
+p { margin: 0 0 10px; color: var(--muted); }
+.small { font-size: 13px; }
+.tiny { font-size: 12px; }
+.center { text-align: center; }
+.label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--faint); margin: 0 0 8px; }
+.brand { display: flex; align-items: center; gap: 8px; font-weight: 800; color: var(--blue); letter-spacing: -0.02em; margin-bottom: 4px; }
+.btn { display: block; width: 100%; border-radius: 12px; padding: 13px 16px; font-weight: 700; font-size: 16px; text-align: center; background: var(--orange); color: #fff; transition: transform .08s; }
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .4; }
+.btn.blue { background: var(--blue); }
+.btn.ghost { background: transparent; color: var(--blue); border: 1.5px solid var(--blue); }
+.btn.ghost.orange { color: var(--orange); border-color: var(--orange); }
+.btn.grey { background: transparent; color: var(--faint); border: 1px solid var(--line); width: auto; padding: 13px 16px; }
+.row { display: flex; gap: 8px; }
+.row > .btn { flex: 1; }
+.choice { display: block; width: 100%; text-align: left; border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; border: 1.5px solid var(--line); background: var(--card); transition: transform .08s; }
+.choice:active { transform: scale(.98); }
+.choice.sel { border-color: var(--orange); background: var(--orange-soft); }
+.choice .t { font-weight: 700; color: var(--blue); }
+.choice .s { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.field { display: block; margin-bottom: 12px; }
+.field input { margin-top: 4px; width: 100%; border-radius: 12px; border: 1px solid #CFC9BC; background: #fff; padding: 10px 12px; font-size: 16px; outline: none; }
+.field input:focus { border-color: var(--blue); }
+.card { border-radius: 16px; background: var(--card); border: 1px solid var(--line); padding: 16px; margin-bottom: 12px; }
+.card.warn { border-color: #F0B98A; }
+.kv { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid #F1EDE4; font-size: 14px; }
+.kv:last-child { border-bottom: 0; }
+.kv .k { color: var(--muted); }
+.kv .v { font-weight: 700; color: var(--blue); text-align: right; }
+.progress { display: flex; gap: 4px; margin: 12px 0; }
+.progress i { height: 4px; flex: 1; border-radius: 4px; background: #E3DDCF; }
+.progress i.done { background: var(--orange); }
+.back { display: block; margin: 14px auto 0; font-size: 14px; color: var(--faint); text-decoration: underline; }
+.note { border-radius: 12px; padding: 12px; font-size: 14px; background: var(--blue-soft); color: var(--blue); margin-bottom: 8px; }
+.pill { font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.pill.paid { background: var(--blue-soft); color: var(--blue); }
+.pill.bal { background: #F1EDE4; color: var(--muted); }
+.pill.cash { background: var(--orange-soft); color: var(--orange); }
+.qty { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+.qty button { width: 44px; height: 44px; border-radius: 12px; border: 1px solid #CFC9BC; font-size: 20px; font-weight: 700; color: var(--blue); background: #fff; }
+.qty span { font-size: 24px; font-weight: 800; color: var(--blue); width: 32px; text-align: center; }
+.sizes { display: flex; gap: 8px; margin-bottom: 16px; }
+.sizes .choice { flex: 1; text-align: center; margin: 0; font-weight: 700; color: var(--blue); }
+.jugs { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0; }
+.jug { display: inline-block; }
+.jug.faded { opacity: .18; }
+.tag { display: inline-block; width: 6px; height: 14px; border-radius: 2px; background: var(--red); vertical-align: -2px; margin-right: 4px; }
+.redtag { font-size: 12px; font-weight: 800; color: var(--red); }
+.offcycle { font-size: 12px; font-weight: 800; color: var(--orange); }
+.mono { font-family: ui-monospace, Menlo, Consolas, monospace; background: #F1EDE4; border-radius: 12px; padding: 10px 12px; font-size: 14px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 8px; }
+.bottombar { position: sticky; bottom: var(--guide-h, 0px); background: var(--card); border-top: 1px solid var(--line); z-index: 20; }
+.tabs { display: flex; }
+.tabs button { flex: 1; padding: 14px 0; font-size: 14px; font-weight: 700; color: var(--faint); }
+.tabs button.on { color: var(--orange); }
+.scroll { flex: 1; }
+
+/* Delivery day */
+.dd-head { position: sticky; top: 86px; z-index: 10; background: var(--paper); padding: 16px 20px 12px; border-bottom: 1px solid var(--line); }
+.dd-title { display: flex; justify-content: space-between; align-items: baseline; }
+.dd-title .t { font-size: 22px; font-weight: 800; color: var(--blue); }
+.dd-title .c { font-size: 14px; font-weight: 800; color: var(--orange); }
+.dd-stats { display: flex; gap: 16px; margin-top: 4px; font-size: 12px; color: var(--muted); }
+.dd-stats b { color: var(--blue); }
+.dd-bar { height: 6px; border-radius: 6px; background: #E3DDCF; margin-top: 8px; overflow: hidden; }
+.dd-bar i { display: block; height: 100%; background: var(--orange); width: 0; transition: width .2s; }
+.stop { border-radius: 16px; border: 1px solid var(--line); background: var(--card); padding: 14px; margin-bottom: 10px; }
+.stop.done { opacity: .45; }
+.stop.off { border-color: var(--orange); }
+.stop .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.stop .name { font-weight: 800; color: var(--blue); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stop .name .n { color: #CFC9BC; margin-right: 6px; }
+.stop .addr { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stop .meta { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 14px; flex-wrap: wrap; }
+.stop .meta .j { font-weight: 700; color: var(--blue); }
+.stop .meta .left { font-size: 12px; color: var(--faint); }
+.stop .acts { display: flex; gap: 8px; margin-top: 12px; }
+.stop .acts .btn { padding: 11px; flex: 1; }
+.stop .result { font-size: 12px; font-weight: 700; color: var(--blue); margin-top: 8px; }
+.dd-foot { padding: 14px 16px; }
+
+/* Guide card */
+.guide-anchor { outline: 3px solid var(--gold); outline-offset: 4px; border-radius: 12px; transition: outline-color .2s; }
+#guide { position: fixed; right: 12px; bottom: 12px; width: min(340px, calc(100vw - 24px)); background: #FFFFFF; border: 1px solid var(--gold); border-radius: 14px; padding: 16px 16px 14px; box-shadow: 0 10px 30px rgba(28,30,26,.14); z-index: 60; color: var(--ink); }
+#guide[hidden] { display: none; }
+#guide .g-step { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+#guide .g-text { font-size: 16px; line-height: 1.4; color: var(--ink); margin: 0 0 14px; }
+#guide .g-row { display: flex; align-items: center; justify-content: space-between; }
+#guide .g-next { background: var(--gold); color: #1C1E1A; font-weight: 700; border-radius: 10px; padding: 9px 18px; font-size: 15px; }
+#guide .g-skip { color: var(--muted); font-size: 14px; text-decoration: underline; }
+#guide-open { position: fixed; right: 12px; bottom: 12px; z-index: 55; background: #FFFFFF; border: 1px solid var(--gold); color: var(--ink); border-radius: 999px; padding: 8px 14px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 14px rgba(28,30,26,.12); }
+#guide-open[hidden] { display: none; }
+@media (max-width: 700px) { #guide-open { bottom: 88px; } }
+#dd-route.guide-anchor { outline-offset: -3px; border-radius: 0; }
+#pb-brand.guide-anchor { outline-offset: 6px; border-radius: 8px; }
+
+</style>
+</head>
+<body>
+<div id="root">
+<div class="pb-strip" id="pb-strip">
+  <div class="pb-brand" id="pb-brand"><span class="pb-mark"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="pb-name">Pragma Build</span></div>
+  <span class="pb-tag">Client build &middot; demo data</span>
+</div>
+
+<div class="screen on" id="screen-delivery"></div>
+
+</div>
+<script>
+// Shared bits. Demo data only. Nothing here saves or sends.
+var CO = "Clearbrook Water Co.";
+function jug(size, color, faded) {
+  size = size || 22; color = color || "#1E4E6E";
+  return '<svg class="jug' + (faded ? ' faded' : '') + '" width="' + size + '" height="' + (size * 1.3) + '" viewBox="0 0 28 36" fill="none" aria-hidden="true">' +
+    '<path d="M9 2h10v4l3 3v22a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3V9l3-3V2z" fill="' + color + '" opacity="0.92"/>' +
+    '<rect x="11" y="0" width="6" height="3" rx="1" fill="' + color + '"/></svg>';
+}
+function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+function $(sel, root) { return (root || document).querySelector(sel); }
+function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+
+// Screen 3: Delivery day. The driver's route. Demo data only.
+var Delivery = (function () {
+  var INITIAL = [
+    { id: 1, name: "Mara Quinn", addr: "18 Orchard Lane, Fairhaven", size: 5, jugs: 2, pay: "balance", balAfter: 0, redTag: true },
+    { id: 2, name: "T. Holloway", addr: "412 Mill Street, Fairhaven", size: 5, jugs: 1, pay: "paid" },
+    { id: 3, name: "Ridge Dental", addr: "77 Harbour Road, Fairhaven", size: 5, jugs: 6, pay: "paid" },
+    { id: 4, name: "S. Barrow", addr: "903 Birch Avenue, Fairhaven", size: 3, jugs: 2, pay: "cash", cashDue: 22 },
+    { id: 5, name: "The Corner Bakery", addr: "260 Station Road, Fairhaven", size: 5, jugs: 4, pay: "balance", balAfter: 11 },
+    { id: 6, name: "A. Delgado", addr: "1160 Ridge Road, West Fairhaven", size: 5, jugs: 2, pay: "paid" },
+    { id: 7, name: "N. Pearce", addr: "34 Elm Court, West Fairhaven", size: 3, jugs: 1, pay: "cash", cashDue: 11 },
+    { id: 8, name: "E. Lindqvist", addr: "605 Hillside Drive, West Fairhaven", size: 5, jugs: 2, pay: "paid", redTag: true }
+  ];
+  var s, root;
+  function reset() {
+    s = { stops: INITIAL.map(function (x) { var c = {}; for (var k in x) c[k] = x[k]; c.delivered = false; c.cashPaid = false; return c; }), showAdd: false };
+  }
+  reset();
+
+  function badge(x) {
+    if (x.pay === "paid") return '<span class="pill paid">PAID</span>';
+    if (x.pay === "balance") return '<span class="pill bal">BALANCE</span>';
+    return '<span class="pill cash">CASH $' + x.cashDue + '</span>';
+  }
+  function view() {
+    var st = s.stops;
+    var done = st.filter(function (x) { return x.delivered; }).length;
+    var totalJugs = st.reduce(function (a, x) { return a + x.jugs; }, 0);
+    var jugsOut = st.filter(function (x) { return x.delivered; }).reduce(function (a, x) { return a + x.jugs; }, 0);
+    var cashGot = st.filter(function (x) { return x.cashPaid; }).reduce(function (a, x) { return a + (x.cashDue || 0); }, 0);
+    var cashExp = st.reduce(function (a, x) { return a + (x.cashDue || 0); }, 0);
+    var h = '<div class="frame">';
+    h += '<div class="dd-head" id="dd-route"><div class="dd-title"><span class="t">Delivery day</span><span class="c">' + done + ' / ' + st.length + ' stops</span></div>' +
+      '<div class="dd-stats"><span><b>' + jugsOut + '</b> of ' + totalJugs + ' jugs out</span><span>Cash <b>$' + cashGot + '</b> of $' + cashExp + '</span></div>' +
+      '<div class="dd-bar"><i style="width:' + (done / st.length * 100) + '%"></i></div></div>';
+    h += '<div class="scroll" style="padding:12px 16px">';
+    st.forEach(function (x, i) {
+      h += '<div class="stop' + (x.delivered ? ' done' : '') + (x.offCycle ? ' off' : '') + '">' +
+        '<div class="top"><div style="min-width:0"><div class="name"><span class="n">' + (i + 1) + '</span>' + esc(x.name) + '</div><div class="addr">' + esc(x.addr) + '</div></div>' + badge(x) + '</div>' +
+        '<div class="meta"><span class="j">' + x.jugs + ' x ' + x.size + '-gal</span>' +
+        (x.pay === "balance" ? '<span class="left">' + x.balAfter + ' left after</span>' : '') +
+        (x.redTag ? '<span class="redtag"><span class="tag"></span>RED TAG</span>' : '') +
+        (x.offCycle ? '<span class="offcycle">OFF-CYCLE</span>' : '') + '</div>';
+      if (!x.delivered) {
+        h += '<div class="acts"><button type="button" class="btn blue" data-act="done:' + x.id + '">Delivered</button>' +
+          (x.pay === "cash" && !x.cashPaid ? '<button type="button" class="btn ghost orange" data-act="cash:' + x.id + '">Paid $' + x.cashDue + '</button>' : '') + '</div>';
+      } else {
+        h += '<div class="result">Exchanged' + (x.pay === "cash" ? (x.cashPaid ? ', cash collected' : ', CASH STILL DUE') : '') + (x.pay === "balance" ? ', balance drawn down' : '') + '</div>';
+      }
+      h += '</div>';
+    });
+    h += '</div>';
+    h += '<div class="bottombar dd-foot">';
+    if (!s.showAdd) h += '<button type="button" class="btn ghost" data-act="showadd">Add Never-Out stop</button>';
+    else h += '<div class="row"><button type="button" class="btn" data-act="add">Add O. Castellan (demo)</button><button type="button" class="btn grey" data-act="cancel">Cancel</button></div>';
+    h += '</div></div>';
+    return h;
+  }
+  function render() { root.innerHTML = view(); }
+  function act(id) {
+    var p = id.split(":");
+    if (p[0] === "done" || p[0] === "cash") {
+      s.stops.forEach(function (x) { if (String(x.id) === p[1]) x[p[0] === "done" ? "delivered" : "cashPaid"] = true; });
+    } else if (id === "showadd") s.showAdd = true;
+    else if (id === "cancel") s.showAdd = false;
+    else if (id === "add") {
+      s.stops.push({ id: Date.now(), name: "Never-Out run: O. Castellan", addr: "5 Lakeside Way, Fairhaven", size: 5, jugs: 1, pay: "balance", balAfter: 5, offCycle: true, delivered: false, cashPaid: false });
+      s.showAdd = false;
+    }
+    render();
+  }
+  function mount(el) {
+    root = el;
+    root.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-act]");
+      if (b) act(b.getAttribute("data-act"));
+    });
+    render();
+  }
+  return { mount: mount, reset: function () { reset(); render(); } };
+})();
+
+// Site shell: the top bar and the guide card. Nothing saves. A reload starts over.
+(function () {
+  var screens = $$(".screen");
+  var single = screens.length === 1;
+
+  function show(name) {
+    screens.forEach(function (el) { el.classList.toggle("on", el.id === "screen-" + name); });
+    $$(".nav-tab").forEach(function (t) {
+      if (t.getAttribute("data-screen") === name) t.setAttribute("aria-current", "page");
+      else t.removeAttribute("aria-current");
+    });
+    window.scrollTo(0, 0);
+  }
+  $$(".nav-tab").forEach(function (t) {
+    t.addEventListener("click", function () { show(t.getAttribute("data-screen")); });
+  });
+
+  if ($("#screen-signup")) Signup.mount($("#screen-signup"));
+  if ($("#screen-account")) Account.mount($("#screen-account"));
+  if ($("#screen-delivery")) Delivery.mount($("#screen-delivery"));
+  if (!single) show("signup");
+
+  // Guide card. Five stops, then one closing card.
+  var guide = $("#guide");
+  if (!guide) return;
+  var STOPS = [
+    { screen: "signup", go: function () { Signup.goStep(0); }, anchor: "#su-welcome",
+      text: "This is a whole business in one app. Start where the customer starts." },
+    { screen: "signup", go: function () { Signup.goStep(1); }, anchor: "#su-plan",
+      text: "They choose once. The account sets itself up behind them." },
+    { screen: "account", go: function () { Account.goTab("home"); }, anchor: "#ac-balance",
+      text: "Every order, every payment, every jug. The owner types none of it." },
+    { screen: "delivery", go: function () {}, anchor: "#dd-route",
+      text: "The route builds itself. The driver just drives it." },
+    { screen: null, go: function () {}, anchor: "#pb-brand",
+      text: "Built by one person, in weeks, not months." }
+  ];
+  var CLOSE = "Have a look around. Press anything you like.";
+  var i = -1;
+  var current = null;
+
+  function clearAnchor() {
+    if (current) current.classList.remove("guide-anchor");
+    current = null;
+  }
+  function setGuideHeight() {
+    var h = guide.hidden ? 0 : guide.offsetHeight + 24;
+    document.documentElement.style.setProperty("--guide-h", (window.innerWidth < 700 ? h : 0) + "px");
+  }
+  function showStop(n) {
+    clearAnchor();
+    i = n;
+    var st = STOPS[n];
+    if (st.screen) show(st.screen);
+    st.go();
+    var el = $(st.anchor);
+    if (el) {
+      current = el;
+      el.classList.add("guide-anchor");
+      el.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+    $("#g-step").textContent = "Stop " + (n + 1) + " of " + STOPS.length;
+    $("#g-text").textContent = st.text;
+    $("#g-next").textContent = n === STOPS.length - 1 ? "Finish" : "Next";
+    $("#g-skip").hidden = false;
+    guide.hidden = false;
+    $("#guide-open").hidden = true;
+    setGuideHeight();
+  }
+  function showClose() {
+    clearAnchor();
+    i = STOPS.length;
+    $("#g-step").textContent = "That is the tour";
+    $("#g-text").textContent = CLOSE;
+    $("#g-next").textContent = "Close";
+    $("#g-skip").hidden = true;
+    setGuideHeight();
+  }
+  function end() {
+    clearAnchor();
+    guide.hidden = true;
+    $("#guide-open").hidden = false;
+    setGuideHeight();
+  }
+  $("#g-next").addEventListener("click", function () {
+    if (i >= STOPS.length) end();
+    else if (i === STOPS.length - 1) showClose();
+    else showStop(i + 1);
+  });
+  $("#g-skip").addEventListener("click", end);
+  $("#guide-open").addEventListener("click", function () { showStop(0); });
+  window.addEventListener("resize", setGuideHeight);
+  showStop(0);
+})();
+
+</script>
+</body>
+</html>
