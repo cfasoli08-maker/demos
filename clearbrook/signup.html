@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Clearbrook Water Co. demo: Sign up</title>
+<style>
+/* Clearbrook Water Co. demo. Demo data only. Light theme only. */
+:root {
+  --paper: #FBF8F1;
+  --card: #FFFFFF;
+  --line: #E6E0D4;
+  --ink: #1C1E1A;
+  --muted: #6B675E;
+  --faint: #A39E93;
+  --blue: #1E4E6E;
+  --blue-soft: #E7EFF4;
+  --orange: #D9722F;
+  --orange-soft: #FBEEE3;
+  --red: #B9362B;
+  --gold: #C4922B;
+  --strip: #F7F6F2;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); }
+body { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.4; -webkit-font-smoothing: antialiased; }
+button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; padding: 0; }
+button:disabled { cursor: default; }
+input { font: inherit; }
+b, strong { font-weight: 700; }
+
+/* Pragma Build strip */
+.pb-strip { height: 38px; background: var(--strip); border-bottom: 1px solid #E8E5DD; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; position: sticky; top: 0; z-index: 40; }
+.pb-brand { display: flex; align-items: center; gap: 8px; }
+.pb-mark { width: 20px; height: 20px; border-radius: 6px; background: var(--gold); display: inline-flex; align-items: center; justify-content: center; }
+.pb-mark svg { width: 13px; height: 13px; display: block; }
+.pb-name { font-weight: 800; color: #1C1E1A; letter-spacing: -0.03em; font-size: 15px; }
+.pb-tag { font-size: 12px; color: #8A867C; }
+
+/* Site nav */
+.nav { background: var(--card); border-bottom: 1px solid var(--line); position: sticky; top: 38px; z-index: 30; }
+.nav-in { max-width: 640px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; height: 48px; gap: 8px; }
+.nav-co { display: flex; align-items: center; gap: 6px; font-weight: 700; color: var(--blue); font-size: 14px; white-space: nowrap; }
+.nav-tabs { display: flex; gap: 2px; }
+.nav-tab { padding: 6px 10px; border-radius: 8px; font-size: 14px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.nav-tab[aria-current="page"] { background: var(--blue-soft); color: var(--blue); }
+@media (max-width: 420px) { .nav-co span { display: none; } .nav-tab { padding: 6px 8px; font-size: 13px; } }
+
+/* Screens */
+.screen { display: none; }
+.screen.on { display: block; }
+.frame { max-width: 420px; margin: 0 auto; min-height: calc(100vh - 86px); display: flex; flex-direction: column; }
+.pad { padding: 20px 20px 24px; }
+h1 { font-size: 28px; line-height: 1.15; margin: 0 0 12px; color: var(--blue); font-weight: 800; }
+h2 { font-size: 22px; line-height: 1.2; margin: 0 0 6px; color: var(--blue); font-weight: 800; }
+p { margin: 0 0 10px; color: var(--muted); }
+.small { font-size: 13px; }
+.tiny { font-size: 12px; }
+.center { text-align: center; }
+.label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--faint); margin: 0 0 8px; }
+.brand { display: flex; align-items: center; gap: 8px; font-weight: 800; color: var(--blue); letter-spacing: -0.02em; margin-bottom: 4px; }
+.btn { display: block; width: 100%; border-radius: 12px; padding: 13px 16px; font-weight: 700; font-size: 16px; text-align: center; background: var(--orange); color: #fff; transition: transform .08s; }
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .4; }
+.btn.blue { background: var(--blue); }
+.btn.ghost { background: transparent; color: var(--blue); border: 1.5px solid var(--blue); }
+.btn.ghost.orange { color: var(--orange); border-color: var(--orange); }
+.btn.grey { background: transparent; color: var(--faint); border: 1px solid var(--line); width: auto; padding: 13px 16px; }
+.row { display: flex; gap: 8px; }
+.row > .btn { flex: 1; }
+.choice { display: block; width: 100%; text-align: left; border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; border: 1.5px solid var(--line); background: var(--card); transition: transform .08s; }
+.choice:active { transform: scale(.98); }
+.choice.sel { border-color: var(--orange); background: var(--orange-soft); }
+.choice .t { font-weight: 700; color: var(--blue); }
+.choice .s { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.field { display: block; margin-bottom: 12px; }
+.field input { margin-top: 4px; width: 100%; border-radius: 12px; border: 1px solid #CFC9BC; background: #fff; padding: 10px 12px; font-size: 16px; outline: none; }
+.field input:focus { border-color: var(--blue); }
+.card { border-radius: 16px; background: var(--card); border: 1px solid var(--line); padding: 16px; margin-bottom: 12px; }
+.card.warn { border-color: #F0B98A; }
+.kv { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid #F1EDE4; font-size: 14px; }
+.kv:last-child { border-bottom: 0; }
+.kv .k { color: var(--muted); }
+.kv .v { font-weight: 700; color: var(--blue); text-align: right; }
+.progress { display: flex; gap: 4px; margin: 12px 0; }
+.progress i { height: 4px; flex: 1; border-radius: 4px; background: #E3DDCF; }
+.progress i.done { background: var(--orange); }
+.back { display: block; margin: 14px auto 0; font-size: 14px; color: var(--faint); text-decoration: underline; }
+.note { border-radius: 12px; padding: 12px; font-size: 14px; background: var(--blue-soft); color: var(--blue); margin-bottom: 8px; }
+.pill { font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.pill.paid { background: var(--blue-soft); color: var(--blue); }
+.pill.bal { background: #F1EDE4; color: var(--muted); }
+.pill.cash { background: var(--orange-soft); color: var(--orange); }
+.qty { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+.qty button { width: 44px; height: 44px; border-radius: 12px; border: 1px solid #CFC9BC; font-size: 20px; font-weight: 700; color: var(--blue); background: #fff; }
+.qty span { font-size: 24px; font-weight: 800; color: var(--blue); width: 32px; text-align: center; }
+.sizes { display: flex; gap: 8px; margin-bottom: 16px; }
+.sizes .choice { flex: 1; text-align: center; margin: 0; font-weight: 700; color: var(--blue); }
+.jugs { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0; }
+.jug { display: inline-block; }
+.jug.faded { opacity: .18; }
+.tag { display: inline-block; width: 6px; height: 14px; border-radius: 2px; background: var(--red); vertical-align: -2px; margin-right: 4px; }
+.redtag { font-size: 12px; font-weight: 800; color: var(--red); }
+.offcycle { font-size: 12px; font-weight: 800; color: var(--orange); }
+.mono { font-family: ui-monospace, Menlo, Consolas, monospace; background: #F1EDE4; border-radius: 12px; padding: 10px 12px; font-size: 14px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 8px; }
+.bottombar { position: sticky; bottom: var(--guide-h, 0px); background: var(--card); border-top: 1px solid var(--line); z-index: 20; }
+.tabs { display: flex; }
+.tabs button { flex: 1; padding: 14px 0; font-size: 14px; font-weight: 700; color: var(--faint); }
+.tabs button.on { color: var(--orange); }
+.scroll { flex: 1; }
+
+/* Delivery day */
+.dd-head { position: sticky; top: 86px; z-index: 10; background: var(--paper); padding: 16px 20px 12px; border-bottom: 1px solid var(--line); }
+.dd-title { display: flex; justify-content: space-between; align-items: baseline; }
+.dd-title .t { font-size: 22px; font-weight: 800; color: var(--blue); }
+.dd-title .c { font-size: 14px; font-weight: 800; color: var(--orange); }
+.dd-stats { display: flex; gap: 16px; margin-top: 4px; font-size: 12px; color: var(--muted); }
+.dd-stats b { color: var(--blue); }
+.dd-bar { height: 6px; border-radius: 6px; background: #E3DDCF; margin-top: 8px; overflow: hidden; }
+.dd-bar i { display: block; height: 100%; background: var(--orange); width: 0; transition: width .2s; }
+.stop { border-radius: 16px; border: 1px solid var(--line); background: var(--card); padding: 14px; margin-bottom: 10px; }
+.stop.done { opacity: .45; }
+.stop.off { border-color: var(--orange); }
+.stop .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.stop .name { font-weight: 800; color: var(--blue); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stop .name .n { color: #CFC9BC; margin-right: 6px; }
+.stop .addr { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stop .meta { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 14px; flex-wrap: wrap; }
+.stop .meta .j { font-weight: 700; color: var(--blue); }
+.stop .meta .left { font-size: 12px; color: var(--faint); }
+.stop .acts { display: flex; gap: 8px; margin-top: 12px; }
+.stop .acts .btn { padding: 11px; flex: 1; }
+.stop .result { font-size: 12px; font-weight: 700; color: var(--blue); margin-top: 8px; }
+.dd-foot { padding: 14px 16px; }
+
+/* Guide card */
+.guide-anchor { outline: 3px solid var(--gold); outline-offset: 4px; border-radius: 12px; transition: outline-color .2s; }
+#guide { position: fixed; right: 12px; bottom: 12px; width: min(340px, calc(100vw - 24px)); background: #FFFFFF; border: 1px solid var(--gold); border-radius: 14px; padding: 16px 16px 14px; box-shadow: 0 10px 30px rgba(28,30,26,.14); z-index: 60; color: var(--ink); }
+#guide[hidden] { display: none; }
+#guide .g-step { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+#guide .g-text { font-size: 16px; line-height: 1.4; color: var(--ink); margin: 0 0 14px; }
+#guide .g-row { display: flex; align-items: center; justify-content: space-between; }
+#guide .g-next { background: var(--gold); color: #1C1E1A; font-weight: 700; border-radius: 10px; padding: 9px 18px; font-size: 15px; }
+#guide .g-skip { color: var(--muted); font-size: 14px; text-decoration: underline; }
+#guide-open { position: fixed; right: 12px; bottom: 12px; z-index: 55; background: #FFFFFF; border: 1px solid var(--gold); color: var(--ink); border-radius: 999px; padding: 8px 14px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 14px rgba(28,30,26,.12); }
+#guide-open[hidden] { display: none; }
+@media (max-width: 700px) { #guide-open { bottom: 88px; } }
+#dd-route.guide-anchor { outline-offset: -3px; border-radius: 0; }
+#pb-brand.guide-anchor { outline-offset: 6px; border-radius: 8px; }
+
+</style>
+</head>
+<body>
+<div id="root">
+<div class="pb-strip" id="pb-strip">
+  <div class="pb-brand" id="pb-brand"><span class="pb-mark"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="pb-name">Pragma Build</span></div>
+  <span class="pb-tag">Client build &middot; demo data</span>
+</div>
+
+<div class="screen on" id="screen-signup"></div>
+
+</div>
+<script>
+// Shared bits. Demo data only. Nothing here saves or sends.
+var CO = "Clearbrook Water Co.";
+function jug(size, color, faded) {
+  size = size || 22; color = color || "#1E4E6E";
+  return '<svg class="jug' + (faded ? ' faded' : '') + '" width="' + size + '" height="' + (size * 1.3) + '" viewBox="0 0 28 36" fill="none" aria-hidden="true">' +
+    '<path d="M9 2h10v4l3 3v22a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3V9l3-3V2z" fill="' + color + '" opacity="0.92"/>' +
+    '<rect x="11" y="0" width="6" height="3" rx="1" fill="' + color + '"/></svg>';
+}
+function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+function $(sel, root) { return (root || document).querySelector(sel); }
+function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+
+// Screen 1: Sign up. An eight step walkthrough. Demo data only.
+var Signup = (function () {
+  var PACKS = {
+    "5": [{ jugs: 20, price: 240, per: 12 }, { jugs: 30, price: 330, per: 11 }, { jugs: 50, price: 500, per: 10 }],
+    "3": [{ jugs: 10, price: 100, per: 10 }, { jugs: 20, price: 180, per: 9 }]
+  };
+  var START = { "5": 29, "3": 27 };
+  var REFILL = { "5": 14, "3": 11 };
+  var STEPS = ["Welcome", "Plan", "Water", "Schedule", "About you", "Payment", "Review", "Done"];
+  var s;
+  function reset() {
+    s = { step: 0, plan: null, size: null, qty: 1, pack: null, cadence: null, pay: null,
+      info: { name: "", address: "", phone: "", email: "", referral: "" } };
+  }
+  reset();
+  var root;
+
+  function total() {
+    if (s.plan === "payg") return s.size ? START[s.size] + REFILL[s.size] * (s.qty - 1) : 0;
+    return s.pack ? s.pack.price : 0;
+  }
+  function choice(id, sel, title, sub) {
+    return '<button type="button" class="choice' + (sel ? ' sel' : '') + '" data-act="' + id + '"><div class="t">' + title + '</div>' + (sub ? '<div class="s">' + sub + '</div>' : '') + '</button>';
+  }
+  function field(key, label, ph, type) {
+    return '<label class="field"><span class="label" style="margin:0">' + label + '</span><input type="' + (type || 'text') + '" data-field="' + key + '" value="' + esc(s.info[key]) + '" placeholder="' + ph + '"></label>';
+  }
+  function btn(id, text, disabled, cls) {
+    return '<button type="button" class="btn ' + (cls || '') + '" data-act="' + id + '"' + (disabled ? ' disabled' : '') + '>' + text + '</button>';
+  }
+
+  function view() {
+    var h = '<div class="pad frame">';
+    h += '<div class="brand" id="su-brand">' + jug(18) + '<span>' + CO + '</span></div>';
+    if (s.step > 0 && s.step < 7) {
+      h += '<div class="progress">';
+      for (var i = 0; i < 6; i++) h += '<i class="' + (i < s.step ? 'done' : '') + '"></i>';
+      h += '</div>';
+    }
+    var st = s.step;
+    if (st === 0) {
+      h += '<div style="flex:1;display:flex;flex-direction:column;justify-content:center"><div id="su-welcome">' +
+        '<div style="display:flex;gap:4px;margin-bottom:20px">' + jug(34) + jug(34, "#3F7A9C") + jug(34, "#8FB6CC") + '</div>' +
+        '<h1>Spring water, delivered the morning it leaves the spring.</h1>' +
+        '<p>Sourced from Cedar Hollow Spring. Naturally alkaline at pH 7.9, never stored. Delivered by our own driver to homes and businesses in Fairhaven and West Fairhaven.</p>' +
+        '<p style="margin-bottom:24px">Every customer gets our Never-Out promise: your last jug carries a red tag, and if you run out, call or text and we bring water.</p>' +
+        btn("next", "Start delivery") +
+        '<p class="tiny center" style="color:var(--faint);margin-top:12px">Takes about two minutes</p></div></div>';
+    } else if (st === 1) {
+      h += '<h2>How do you want to pay for water?</h2><p class="small">One choice. Everything else stays simple.</p>' +
+        '<div id="su-plan">' +
+        choice("plan:payg", s.plan === "payg", "Pay As You Go", "$29 gets you started: account setup, your first jug filled, and delivery. Every jug after that is $14. Order when you want water.") +
+        choice("plan:pack", s.plan === "pack", "Prepaid Pack", "Skip the $29 start fee. Pay $12, $11, or $10 per jug based on your pack size. Your balance draws down each delivery.") +
+        '</div><div style="margin-top:16px">' + btn("next", "Continue", !s.plan) + '</div>';
+    } else if (st === 2) {
+      h += '<h2 style="margin-bottom:16px">Pick your water.</h2><p class="label">Jug size</p><div class="sizes">' +
+        '<button type="button" class="choice' + (s.size === "5" ? ' sel' : '') + '" data-act="size:5">5 gallon</button>' +
+        '<button type="button" class="choice' + (s.size === "3" ? ' sel' : '') + '" data-act="size:3">3 gallon</button></div>';
+      if (s.plan === "payg" && s.size) {
+        h += '<p class="label">Jugs per delivery</p><div class="qty"><button type="button" data-act="qty:-1">-</button><span>' + s.qty + '</span><button type="button" data-act="qty:1">+</button></div>' +
+          '<div class="note">First order: <b>$' + total() + '</b> ($' + START[s.size] + ' start covers setup plus jug one' + (s.qty > 1 ? ', plus ' + (s.qty - 1) + ' more at $' + REFILL[s.size] + ' each' : '') + '). After that, $' + REFILL[s.size] + ' per jug.</div>';
+      }
+      if (s.plan === "pack" && s.size) {
+        h += '<p class="label">Pack size</p>';
+        PACKS[s.size].forEach(function (p) {
+          h += choice("pack:" + p.jugs, s.pack && s.pack.jugs === p.jugs, p.jugs + " jugs for $" + p.price, "$" + p.per + " per jug. No start fee.");
+        });
+      }
+      h += '<div style="margin-top:16px">' + btn("next", "Continue", !s.size || (s.plan === "pack" && !s.pack)) + '</div>';
+    } else if (st === 3) {
+      h += '<h2>How should we check in?</h2><p class="small">We only deliver when you say yes. Pick how often we ask.</p>' +
+        choice("cad:weekly", s.cadence === "weekly", "Weekly", "A quick text every week. Reply to order, ignore to skip.") +
+        choice("cad:biweekly", s.cadence === "biweekly", "Every two weeks", "Same quick text, half as often.") +
+        choice("cad:asneeded", s.cadence === "asneeded", "Order as needed", "No check-ins. Open the app and order whenever you want water.") +
+        '<div style="margin-top:16px">' + btn("next", "Continue", !s.cadence) + '</div>';
+    } else if (st === 4) {
+      var ok = s.info.name && s.info.address && s.info.phone && s.info.email;
+      h += '<h2 style="margin-bottom:16px">Where does the water go?</h2>' +
+        field("name", "Full name", "Mara Quinn") +
+        field("address", "Delivery address", "18 Orchard Lane, Fairhaven") +
+        field("phone", "Phone", "555 0192", "tel") +
+        field("email", "Email", "mara@example.com", "email") +
+        field("referral", "Referral code (if a neighbour sent you)", "Optional") +
+        '<div style="margin-top:8px">' + btn("next", "Continue", !ok) + '</div>';
+    } else if (st === 5) {
+      h += '<h2>How will you pay?</h2><p class="small">Deliveries confirm once payment is received. Cash customers confirm right away and pay at the door.</p>' +
+        choice("pay:card", s.pay === "card", "Credit card", "Card on file. Charged before delivery. The simplest option.") +
+        choice("pay:etransfer", s.pay === "etransfer", "E-transfer", "Send before delivery day with your invoice number in the memo.") +
+        choice("pay:cash", s.pay === "cash", "Cash at the door", "Pay the driver at each exchange.") +
+        (s.pay === "card" ? '<div class="card small" style="color:var(--faint);margin-top:4px">Card entry appears here (demo)</div>' : '') +
+        '<div style="margin-top:16px">' + btn("next", "Continue", !s.pay) + '</div>';
+    } else if (st === 6) {
+      var rows = [
+        ["Plan", s.plan === "payg" ? "Pay As You Go" : "Prepaid " + (s.pack ? s.pack.jugs : "") + "-Pack"],
+        ["Water", s.plan === "payg" ? s.qty + " x " + s.size + "-gallon per delivery" : (s.pack ? s.pack.jugs : "") + " x " + s.size + "-gallon jugs"],
+        ["Check-ins", s.cadence === "weekly" ? "Weekly" : s.cadence === "biweekly" ? "Every two weeks" : "Order as needed"],
+        ["Deliver to", esc(s.info.address)],
+        ["Payment", s.pay === "card" ? "Card on file" : s.pay === "etransfer" ? "E-transfer before delivery" : "Cash at the door"]
+      ];
+      h += '<h2 style="margin-bottom:16px">Everything look right?</h2><div class="card" style="padding:0 16px">';
+      rows.forEach(function (r) { h += '<div class="kv"><span class="k">' + r[0] + '</span><span class="v">' + r[1] + '</span></div>'; });
+      h += '<div class="kv" style="border-top:1px solid #F1EDE4"><span class="v" style="text-align:left">Due today</span><span class="v" style="color:var(--orange);font-size:18px">' + (s.pay === "cash" ? "$" + total() + " at first delivery" : "$" + total()) + '</span></div></div>' +
+        '<p class="tiny" style="color:var(--faint)">Jugs stay ours; every delivery is a fresh exchange. Full terms, including our jug care policy, arrive in your welcome email.</p>' +
+        '<div style="margin-top:16px">' + btn("next", s.pay === "cash" ? "Confirm my setup" : "Pay $" + total() + " and start") + '</div>';
+    } else {
+      var first = (s.info.name || "").split(" ")[0] || "friend";
+      h += '<div class="center" style="flex:1;display:flex;flex-direction:column;justify-content:center">' +
+        '<div style="margin-bottom:16px">' + jug(44, "#D9722F") + '</div>' +
+        '<h2>Welcome to the well, ' + esc(first) + '.</h2>' +
+        '<p>Check your email. Your welcome message has your account link, your first delivery details, and your personal referral link.</p>' +
+        '<p style="margin-bottom:24px">Share your referral link with a neighbour and you both benefit. Water is better in community.</p>' +
+        btn("restart", "Start over", false, "ghost") + '</div>';
+    }
+    if (st > 0 && st < 7) h += '<button type="button" class="back" data-act="back">Back</button>';
+    h += '</div>';
+    return h;
+  }
+
+  function render() { root.innerHTML = view(); }
+
+  function act(id) {
+    var p = id.split(":");
+    if (id === "next") s.step = Math.min(s.step + 1, STEPS.length - 1);
+    else if (id === "back") s.step = Math.max(s.step - 1, 0);
+    else if (id === "restart") reset();
+    else if (p[0] === "plan") s.plan = p[1];
+    else if (p[0] === "size") { s.size = p[1]; s.pack = null; }
+    else if (p[0] === "qty") s.qty = Math.max(1, s.qty + Number(p[1]));
+    else if (p[0] === "pack") s.pack = PACKS[s.size].filter(function (x) { return String(x.jugs) === p[1]; })[0];
+    else if (p[0] === "cad") s.cadence = p[1];
+    else if (p[0] === "pay") s.pay = p[1];
+    render();
+  }
+
+  function mount(el) {
+    root = el;
+    root.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-act]");
+      if (b && !b.disabled) act(b.getAttribute("data-act"));
+    });
+    root.addEventListener("input", function (e) {
+      var f = e.target.getAttribute && e.target.getAttribute("data-field");
+      if (!f) return;
+      s.info[f] = e.target.value;
+      var ok = s.info.name && s.info.address && s.info.phone && s.info.email;
+      var nb = root.querySelector('[data-act="next"]');
+      if (nb) nb.disabled = !ok;
+    });
+    render();
+  }
+  function goStep(n) { s.step = n; render(); }
+  return { mount: mount, goStep: goStep, reset: function () { reset(); render(); } };
+})();
+
+// Site shell: the top bar and the guide card. Nothing saves. A reload starts over.
+(function () {
+  var screens = $$(".screen");
+  var single = screens.length === 1;
+
+  function show(name) {
+    screens.forEach(function (el) { el.classList.toggle("on", el.id === "screen-" + name); });
+    $$(".nav-tab").forEach(function (t) {
+      if (t.getAttribute("data-screen") === name) t.setAttribute("aria-current", "page");
+      else t.removeAttribute("aria-current");
+    });
+    window.scrollTo(0, 0);
+  }
+  $$(".nav-tab").forEach(function (t) {
+    t.addEventListener("click", function () { show(t.getAttribute("data-screen")); });
+  });
+
+  if ($("#screen-signup")) Signup.mount($("#screen-signup"));
+  if ($("#screen-account")) Account.mount($("#screen-account"));
+  if ($("#screen-delivery")) Delivery.mount($("#screen-delivery"));
+  if (!single) show("signup");
+
+  // Guide card. Five stops, then one closing card.
+  var guide = $("#guide");
+  if (!guide) return;
+  var STOPS = [
+    { screen: "signup", go: function () { Signup.goStep(0); }, anchor: "#su-welcome",
+      text: "This is a whole business in one app. Start where the customer starts." },
+    { screen: "signup", go: function () { Signup.goStep(1); }, anchor: "#su-plan",
+      text: "They choose once. The account sets itself up behind them." },
+    { screen: "account", go: function () { Account.goTab("home"); }, anchor: "#ac-balance",
+      text: "Every order, every payment, every jug. The owner types none of it." },
+    { screen: "delivery", go: function () {}, anchor: "#dd-route",
+      text: "The route builds itself. The driver just drives it." },
+    { screen: null, go: function () {}, anchor: "#pb-brand",
+      text: "Built by one person, in weeks, not months." }
+  ];
+  var CLOSE = "Have a look around. Press anything you like.";
+  var i = -1;
+  var current = null;
+
+  function clearAnchor() {
+    if (current) current.classList.remove("guide-anchor");
+    current = null;
+  }
+  function setGuideHeight() {
+    var h = guide.hidden ? 0 : guide.offsetHeight + 24;
+    document.documentElement.style.setProperty("--guide-h", (window.innerWidth < 700 ? h : 0) + "px");
+  }
+  function showStop(n) {
+    clearAnchor();
+    i = n;
+    var st = STOPS[n];
+    if (st.screen) show(st.screen);
+    st.go();
+    var el = $(st.anchor);
+    if (el) {
+      current = el;
+      el.classList.add("guide-anchor");
+      el.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+    $("#g-step").textContent = "Stop " + (n + 1) + " of " + STOPS.length;
+    $("#g-text").textContent = st.text;
+    $("#g-next").textContent = n === STOPS.length - 1 ? "Finish" : "Next";
+    $("#g-skip").hidden = false;
+    guide.hidden = false;
+    $("#guide-open").hidden = true;
+    setGuideHeight();
+  }
+  function showClose() {
+    clearAnchor();
+    i = STOPS.length;
+    $("#g-step").textContent = "That is the tour";
+    $("#g-text").textContent = CLOSE;
+    $("#g-next").textContent = "Close";
+    $("#g-skip").hidden = true;
+    setGuideHeight();
+  }
+  function end() {
+    clearAnchor();
+    guide.hidden = true;
+    $("#guide-open").hidden = false;
+    setGuideHeight();
+  }
+  $("#g-next").addEventListener("click", function () {
+    if (i >= STOPS.length) end();
+    else if (i === STOPS.length - 1) showClose();
+    else showStop(i + 1);
+  });
+  $("#g-skip").addEventListener("click", end);
+  $("#guide-open").addEventListener("click", function () { showStop(0); });
+  window.addEventListener("resize", setGuideHeight);
+  showStop(0);
+})();
+
+</script>
+</body>
+</html>
