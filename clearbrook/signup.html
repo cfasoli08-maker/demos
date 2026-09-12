@@ -8,6 +8,8 @@
 <style>
 /* Clearbrook Water Co. demo. Demo data only. Light theme only. */
 :root {
+  --strip-h: 38px;
+  --guide-h: 0px;
   --paper: #FBF8F1;
   --card: #FFFFFF;
   --line: #E6E0D4;
@@ -31,16 +33,17 @@ input { font: inherit; }
 b, strong { font-weight: 700; }
 
 /* Pragma Build strip */
-.pb-strip { height: 38px; background: var(--strip); border-bottom: 1px solid #E8E5DD; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; position: sticky; top: 0; z-index: 40; }
+.pb-strip { min-height: 38px; background: var(--strip); border-bottom: 1px solid #E8E5DD; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; position: sticky; top: 0; z-index: 40; }
 .pb-brand { display: flex; align-items: center; gap: 8px; }
 .pb-mark { width: 20px; height: 20px; border-radius: 6px; background: var(--gold); display: inline-flex; align-items: center; justify-content: center; }
 .pb-mark svg { width: 13px; height: 13px; display: block; }
 .pb-name { font-weight: 800; color: #1C1E1A; letter-spacing: -0.03em; font-size: 15px; }
-.pb-tag { font-size: 12px; color: #8A867C; }
+.pb-tag { font-size: 12px; color: #8A867C; text-align: right; }
+@media (max-width: 640px) { .pb-strip { flex-wrap: wrap; padding: 6px 14px; gap: 2px 8px; } .pb-tag { flex-basis: 100%; text-align: left; font-size: 11px; line-height: 1.3; } }
 
 /* Site nav */
-.nav { background: var(--card); border-bottom: 1px solid var(--line); position: sticky; top: 38px; z-index: 30; }
-.nav-in { max-width: 640px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; height: 48px; gap: 8px; }
+.nav { background: var(--card); border-bottom: 1px solid var(--line); position: sticky; top: var(--strip-h); z-index: 30; }
+.nav-in { max-width: 640px; margin: 0 auto; display: flex; align-items: center; justify-content: center; padding: 0 12px; height: 48px; gap: 8px; }
 .nav-co { display: flex; align-items: center; gap: 6px; font-weight: 700; color: var(--blue); font-size: 14px; white-space: nowrap; }
 .nav-tabs { display: flex; gap: 2px; }
 .nav-tab { padding: 6px 10px; border-radius: 8px; font-size: 14px; font-weight: 600; color: var(--muted); white-space: nowrap; }
@@ -50,7 +53,7 @@ b, strong { font-weight: 700; }
 /* Screens */
 .screen { display: none; }
 .screen.on { display: block; }
-.frame { max-width: 420px; margin: 0 auto; min-height: calc(100vh - 86px); display: flex; flex-direction: column; }
+.frame { max-width: 420px; margin: 0 auto; min-height: calc(100vh - var(--strip-h) - 48px); display: flex; flex-direction: column; }
 .pad { padding: 20px 20px 24px; }
 h1 { font-size: 28px; line-height: 1.15; margin: 0 0 12px; color: var(--blue); font-weight: 800; }
 h2 { font-size: 22px; line-height: 1.2; margin: 0 0 6px; color: var(--blue); font-weight: 800; }
@@ -104,14 +107,14 @@ p { margin: 0 0 10px; color: var(--muted); }
 .redtag { font-size: 12px; font-weight: 800; color: var(--red); }
 .offcycle { font-size: 12px; font-weight: 800; color: var(--orange); }
 .mono { font-family: ui-monospace, Menlo, Consolas, monospace; background: #F1EDE4; border-radius: 12px; padding: 10px 12px; font-size: 14px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 8px; }
-.bottombar { position: sticky; bottom: var(--guide-h, 0px); background: var(--card); border-top: 1px solid var(--line); z-index: 20; }
+.bottombar { position: sticky; bottom: var(--guide-h); background: var(--card); border-top: 1px solid var(--line); z-index: 20; }
 .tabs { display: flex; }
 .tabs button { flex: 1; padding: 14px 0; font-size: 14px; font-weight: 700; color: var(--faint); }
 .tabs button.on { color: var(--orange); }
 .scroll { flex: 1; }
 
 /* Delivery day */
-.dd-head { position: sticky; top: 86px; z-index: 10; background: var(--paper); padding: 16px 20px 12px; border-bottom: 1px solid var(--line); }
+.dd-head { position: sticky; top: calc(var(--strip-h) + 48px); z-index: 10; background: var(--paper); padding: 16px 20px 12px; border-bottom: 1px solid var(--line); }
 .dd-title { display: flex; justify-content: space-between; align-items: baseline; }
 .dd-title .t { font-size: 22px; font-weight: 800; color: var(--blue); }
 .dd-title .c { font-size: 14px; font-weight: 800; color: var(--orange); }
@@ -120,7 +123,7 @@ p { margin: 0 0 10px; color: var(--muted); }
 .dd-bar { height: 6px; border-radius: 6px; background: #E3DDCF; margin-top: 8px; overflow: hidden; }
 .dd-bar i { display: block; height: 100%; background: var(--orange); width: 0; transition: width .2s; }
 .stop { border-radius: 16px; border: 1px solid var(--line); background: var(--card); padding: 14px; margin-bottom: 10px; }
-.stop.done { opacity: .45; }
+.stop.done .top, .stop.done .meta { opacity: .45; }
 .stop.off { border-color: var(--orange); }
 .stop .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
 .stop .name { font-weight: 800; color: var(--blue); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -145,9 +148,27 @@ p { margin: 0 0 10px; color: var(--muted); }
 #guide .g-skip { color: var(--muted); font-size: 14px; text-decoration: underline; }
 #guide-open { position: fixed; right: 12px; bottom: 12px; z-index: 55; background: #FFFFFF; border: 1px solid var(--gold); color: var(--ink); border-radius: 999px; padding: 8px 14px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 14px rgba(28,30,26,.12); }
 #guide-open[hidden] { display: none; }
-@media (max-width: 700px) { #guide-open { bottom: 88px; } }
+
 #dd-route.guide-anchor { outline-offset: -3px; border-radius: 0; }
 #pb-brand.guide-anchor { outline-offset: 6px; border-radius: 8px; }
+
+/* 3. Room under the page while the tour runs on a narrow screen */
+
+/* 4. The corner mark. Fixed, bottom left, the one link out. */
+#pb-corner { position: fixed; left: 12px; bottom: 12px; width: 28px; height: 28px; border-radius: 8px; background: var(--gold); display: flex; align-items: center; justify-content: center; z-index: 50; box-shadow: 0 2px 8px rgba(28,30,26,.18); }
+#pb-corner svg { width: 18px; height: 18px; display: block; }
+@media (max-width: 500px) {
+  #pb-corner { width: 24px; height: 24px; border-radius: 7px; bottom: calc(12px + var(--guide-h)); }
+  #pb-corner svg { width: 15px; height: 15px; }
+  .bottombar { padding-left: 44px; padding-right: 132px; }
+  .tabs button { font-size: 13px; }
+  #guide-open { bottom: calc(12px + var(--guide-h)); font-size: 12px; padding: 6px 10px; }
+  body { padding-bottom: calc(48px + var(--guide-h)); }
+}
+/* 6. Proof of delivery */
+.proof { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+.proof svg { flex: none; border-radius: 8px; }
+.proof-t { font-size: 12px; color: var(--muted); }
 
 </style>
 </head>
@@ -155,11 +176,12 @@ p { margin: 0 0 10px; color: var(--muted); }
 <div id="root">
 <div class="pb-strip" id="pb-strip">
   <div class="pb-brand" id="pb-brand"><span class="pb-mark"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="pb-name">Pragma Build</span></div>
-  <span class="pb-tag">Client build &middot; demo data</span>
+  <span class="pb-tag">Client build &middot; demo data &middot; A real system Pragma Build made for a client. Press anything.</span>
 </div>
 
 <div class="screen on" id="screen-signup"></div>
 
+<a id="pb-corner" href="https://pragmabuild.com" target="_blank" rel="noopener" aria-label="Pragma Build"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
 </div>
 <script>
 // Shared bits. Demo data only. Nothing here saves or sends.
@@ -215,7 +237,7 @@ var Signup = (function () {
     }
     var st = s.step;
     if (st === 0) {
-      h += '<div style="flex:1;display:flex;flex-direction:column;justify-content:center"><div id="su-welcome">' +
+      h += '<div style="padding-top:8px"><div id="su-welcome">' +
         '<div style="display:flex;gap:4px;margin-bottom:20px">' + jug(34) + jug(34, "#3F7A9C") + jug(34, "#8FB6CC") + '</div>' +
         '<h1>Spring water, delivered the morning it leaves the spring.</h1>' +
         '<p>Sourced from Cedar Hollow Spring. Naturally alkaline at pH 7.9, never stored. Delivered by our own driver to homes and businesses in Fairhaven and West Fairhaven.</p>' +
@@ -331,6 +353,12 @@ var Signup = (function () {
 // Site shell: the top bar and the guide card. Nothing saves. A reload starts over.
 (function () {
   var screens = $$(".screen");
+  function setStripHeight() {
+    var st = $("#pb-strip");
+    if (st) document.documentElement.style.setProperty("--strip-h", st.offsetHeight + "px");
+  }
+  setStripHeight();
+  window.addEventListener("resize", setStripHeight);
   var single = screens.length === 1;
 
   function show(name) {
